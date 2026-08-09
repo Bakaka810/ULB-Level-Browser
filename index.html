@@ -1496,7 +1496,7 @@ Changed the name to "ULB Level Browser"!</div>
                 creator: "Bot360",
                 id: "861076",
                 tags: ["boss"],
-                thumbnail: "https://www.image2url.com/r2/default/images/1786232346602-15bca54e-6f59-487d-94c9-2f99a13c8112.png"
+                thumbnail: "https://www.image2url.comi/r2/default/images/1786232346602-15bca54e-6f59-487d-94c9-2f99a13c8112.png"
             }
         ];
 
@@ -1566,7 +1566,10 @@ Changed the name to "ULB Level Browser"!</div>
                 document.querySelectorAll('.optSearchIdClass').forEach(el => el.innerText = 'World ID');
                 document.querySelectorAll('.optSearchTitleClass').forEach(el => el.innerText = 'World Title');
                 document.querySelectorAll('.labelTitleInputClass').forEach(el => el.innerText = 'World:');
-                if (logoImg) logoImg.src = LOGO_WORLDS_URL;
+                if (logoImg) {
+                    logoImg.src = LOGO_WORLDS_URL;
+                    logoImg.style.height = (window.innerWidth <= 850) ? '38px' : '44px';
+                }
             } else {
                 document.body.classList.remove('worlds-active');
                 document.getElementById('tabLevelsBtn').classList.add('active');
@@ -1574,7 +1577,10 @@ Changed the name to "ULB Level Browser"!</div>
                 document.querySelectorAll('.optSearchIdClass').forEach(el => el.innerText = 'Level ID');
                 document.querySelectorAll('.optSearchTitleClass').forEach(el => el.innerText = 'Level Title');
                 document.querySelectorAll('.labelTitleInputClass').forEach(el => el.innerText = 'Level:');
-                if (logoImg) logoImg.src = LOGO_LEVELS_URL;
+                if (logoImg) {
+                    logoImg.src = LOGO_LEVELS_URL;
+                    logoImg.style.height = (window.innerWidth <= 850) ? '28px' : '32px';
+                }
             }
             
             toggleSearchInputs();
