@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ULB Level Browser - Ultimate Level Maker</title>
     
-    <!-- Favicon for GitHub Pages -->
+    <!-- Favicon for GitHub Pages / Netlify -->
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="shortcut icon" type="image/png" href="favicon.png">
 
@@ -34,7 +34,7 @@
 
         /* WORLDS TAB ACTIVE STATE */
         body.worlds-active {
-            background-color: #0066ff !important; /* Normal Blue */
+            background-color: #0066ff !important;
         }
 
         body.worlds-active .side-pillar {
@@ -53,7 +53,7 @@
 
         /* DARK MODE STYLES */
         body.dark-mode-active {
-            background-color: #1e293b !important; /* Brighter Dark Blue */
+            background-color: #1e293b !important;
         }
 
         body.dark-mode-active .side-pillar {
@@ -2014,24 +2014,6 @@ Changed the name to "ULB Level Browser"!</div>
                 items.sort((a, b) => (b.siteIndex ?? 0) - (a.siteIndex ?? 0));
             } else if (currentChartMode === 'oldest_id') {
                 items.sort((a, b) => parseInt(a.id || 0) - parseInt(b.id || 0));
-            } else if (currentChartMode === 'newest_id') {
-                items.sort((a, b) => parseInt(b.id || 0) - parseInt(a.id || 0));
-            } else if (currentChartMode.startsWith('tag_')) {
-                const tagToFilter = currentChartMode.replace('tag_', '').toLowerCase();
-                items = items.filter(item => item.tags && item.tags.map(t => t.toLowerCase()).includes(tagToFilter));
-            } else {
-                items = shuffleArray([...items]);
-            }
-
-            currentFilteredLevels = items;
-            currentPage = 1;
-            renderPage();
-        }
-    </script>
-</body>
-</html>
-
- - parseInt(b.id || 0));
             } else if (currentChartMode === 'newest_id') {
                 items.sort((a, b) => parseInt(b.id || 0) - parseInt(a.id || 0));
             } else if (currentChartMode.startsWith('tag_')) {
