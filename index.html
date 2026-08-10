@@ -953,7 +953,6 @@
 
         /* DESKTOP (PC) VS MOBILE SEARCH DISPLAY RULES */
         @media (min-width: 851px) {
-            /* On Desktop: Show button in header, search fields inside modal */
             .pc-search-btn-wrapper {
                 display: flex;
             }
@@ -963,7 +962,6 @@
         }
 
         @media (max-width: 850px) {
-            /* On Mobile: Hide PC Search Button, display inline standard search */
             .pc-search-btn-wrapper {
                 display: none !important;
             }
@@ -1021,12 +1019,10 @@
                 width: 100%;
             }
 
-            /* Show mobile chart dropdown inside search container */
             .mobile-chart-wrapper {
                 display: block;
             }
 
-            /* Hide PC Chart Bar above grid on mobile */
             .grid-header-bar {
                 display: none;
             }
@@ -1057,7 +1053,6 @@
 
         <!-- MOBILE ONLY INLINE SEARCH CONTAINER -->
         <div class="search-container mobile-search-inline">
-            <!-- SEARCH MODE DROPDOWN -->
             <div class="custom-dropdown" id="searchDropdownMobile">
                 <div class="dropdown-selected searchDropdownSelectedClass" onclick="toggleDropdown(event, 'searchDropdownOptionsMobile')">All Fields</div>
                 <div class="dropdown-options" id="searchDropdownOptionsMobile">
@@ -1069,12 +1064,10 @@
                 </div>
             </div>
 
-            <!-- Single Input Box -->
             <div class="search-box singleSearchBoxClass">
                 <input type="text" class="searchInputClass" placeholder="Search levels..." oninput="syncAndSearch(this)" />
             </div>
 
-            <!-- Dual Input Box (Title + Creator) -->
             <div class="dual-search-box dualSearchBoxClass" style="display: none;">
                 <div class="input-group">
                     <span class="input-label labelTitleInputClass">Level:</span>
@@ -1086,7 +1079,6 @@
                 </div>
             </div>
 
-            <!-- MOBILE ONLY CHART DROPDOWN -->
             <div class="mobile-chart-wrapper">
                 <div class="custom-dropdown" id="mobileChartDropdown">
                     <div class="dropdown-selected chart-selected-label" onclick="toggleDropdown(event, 'mobileChartDropdownOptions')">Chart: None</div>
@@ -1124,7 +1116,6 @@
             <div class="search-modal-title">SEARCH BROWSER</div>
             
             <div class="search-container">
-                <!-- SEARCH MODE DROPDOWN -->
                 <div class="custom-dropdown" id="searchDropdownPc">
                     <div class="dropdown-selected searchDropdownSelectedClass" onclick="toggleDropdown(event, 'searchDropdownOptionsPc')">All Fields</div>
                     <div class="dropdown-options" id="searchDropdownOptionsPc">
@@ -1136,12 +1127,10 @@
                     </div>
                 </div>
 
-                <!-- Single Input Box -->
                 <div class="search-box singleSearchBoxClass">
                     <input type="text" class="searchInputClass" placeholder="Search levels..." oninput="syncAndSearch(this)" />
                 </div>
 
-                <!-- Dual Input Box (Title + Creator) -->
                 <div class="dual-search-box dualSearchBoxClass" style="display: none;">
                     <div class="input-group">
                         <span class="input-label labelTitleInputClass">Level:</span>
@@ -1167,7 +1156,6 @@
 
         <!-- Content Area -->
         <div class="content-area">
-            <!-- PC CHART / TAG DROPDOWN (Positioned Right Above Grid) -->
             <div class="grid-header-bar">
                 <div class="custom-dropdown" id="pcChartDropdown">
                     <div class="dropdown-selected chart-selected-label" onclick="toggleDropdown(event, 'pcChartDropdownOptions')">Chart: None</div>
@@ -1200,7 +1188,6 @@
                 <span class="page-arrow" id="nextPageBtn" onclick="changePage(1)">&gt;</span>
             </div>
 
-            <!-- Affiliation Disclaimer Footer Container -->
             <div class="footer-notice-container">
                 <div class="affiliation-notice">
                     ULB Level Browser is not affiliated by BVB Games!
@@ -1258,13 +1245,12 @@
         </div>
     </div>
 
-    <!-- Combined More Modal (Rules, Credits, Updates, Options) -->
+    <!-- Combined More Modal -->
     <div class="modal-overlay" id="moreModal" onclick="closeModal(event, 'moreModal')">
         <div class="modal-card more-card">
             <button class="close-modal-btn" onclick="hideModal('moreModal')">X</button>
             <div class="more-title">MORE</div>
 
-            <!-- More Navigation Tabs -->
             <div class="more-tab-nav">
                 <button class="more-tab-btn" id="tabBtn-rules" onclick="switchMoreTab('rules')">Rules</button>
                 <button class="more-tab-btn" id="tabBtn-credits" onclick="switchMoreTab('credits')">Credits</button>
@@ -1352,7 +1338,7 @@ Changed the name to "ULB Level Browser"!</div>
     <script>
         const PAGE_SIZE = 4;
         let currentPage = 1;
-        let currentMainTab = 'levels'; // 'levels' or 'worlds'
+        let currentMainTab = 'levels';
         let currentFilteredLevels = [];
         let currentSearchMode = 'all';
         let currentChartMode = 'none';
@@ -1362,13 +1348,10 @@ Changed the name to "ULB Level Browser"!</div>
 
         const DEFAULT_OG_BADGE_URL = "https://www.image2url.com/r2/default/images/1786118955607-6926cb16-97da-4e24-8fe2-ba738b7dae6f.png";
         
-        // Map creators to specific badge URLs
         const SPECIAL_CREATOR_BADGES = {};
 
-        // Standard OG Creators using default badge
         const OG_CREATORS = ["abobus228", "unbwill", "toño", "failed boy", "isporik pc 3", "myfirsttry", "marthecoolguy", "marquise94"];
 
-        // Aliases mapping old or alternate creator names to primary profiles
         const CREATOR_ALIASES = {
             "marquise94": "Marthecoolguy"
         };
@@ -1517,6 +1500,14 @@ Changed the name to "ULB Level Browser"!</div>
                 id: "872350",
                 tags: ["music"],
                 thumbnail: "https://www.image2url.com/r2/default/images/1786302491793-6ec35ea0-4b8b-4c3b-bbab-9ba368e0cd1d.png"
+            },
+            {
+                title: "Cretas House",
+                description: "Enter the MYSTERIOUS house of one creta van cretahammer",
+                creator: "Creta The Silly",
+                id: "532586",
+                tags: ["traditional", "adventure"],
+                thumbnail: "https://www.image2url.com/r2/default/images/1786394385323-ab248ca0-5e2c-4343-af1d-a445bc29ca0f.png"
             }
         ];
 
@@ -1538,7 +1529,6 @@ Changed the name to "ULB Level Browser"!</div>
             const indexedWorlds = DEFAULT_WORLDS.map((w, idx) => ({ ...w, siteIndex: idx }));
             localStorage.setItem('ulbLevelExplorer_Worlds', JSON.stringify(indexedWorlds));
             
-            // Check stored options
             const savedHideBadges = localStorage.getItem('ulbLevelExplorer_HideBadges') === 'true';
             if (savedHideBadges) {
                 document.body.classList.add('hide-badges-active');
@@ -2024,6 +2014,23 @@ Changed the name to "ULB Level Browser"!</div>
                 items.sort((a, b) => (b.siteIndex ?? 0) - (a.siteIndex ?? 0));
             } else if (currentChartMode === 'oldest_id') {
                 items.sort((a, b) => parseInt(a.id || 0) - parseInt(b.id || 0));
+            } else if (currentChartMode === 'newest_id') {
+                items.sort((a, b) => parseInt(b.id || 0) - parseInt(a.id || 0));
+            } else if (currentChartMode.startsWith('tag_')) {
+                const tagToFilter = currentChartMode.replace('tag_', '').toLowerCase();
+                items = items.filter(item => item.tags && item.tags.map(t => t.toLowerCase()).includes(tagToFilter));
+            } else {
+                items = shuffleArray([...items]);
+            }
+
+            currentFilteredLevels = items;
+            currentPage = 1;
+            renderPage();
+        }
+    </script>
+</body>
+</html>
+ - parseInt(b.id || 0));
             } else if (currentChartMode === 'newest_id') {
                 items.sort((a, b) => parseInt(b.id || 0) - parseInt(a.id || 0));
             } else if (currentChartMode.startsWith('tag_')) {
