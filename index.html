@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ULB Level Browser - Ultimate Level Maker</title>
+    <title>ULB: Level Browser</title>
     
     <!-- Favicon for GitHub Pages / Netlify -->
     <link rel="icon" type="image/png" href="favicon.png">
@@ -641,6 +641,7 @@
             color: #60a5fa !important;
         }
 
+        /* Description Container with Truncation Styling */
         .modal-description {
             font-size: 0.75rem;
             line-height: 1.5;
@@ -649,6 +650,30 @@
             border-radius: 8px;
             border: 1px solid #333;
             white-space: pre-line;
+            word-break: break-word;
+            position: relative;
+        }
+
+        .modal-description.has-more {
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .modal-description.has-more:hover {
+            border-color: #ffcc00;
+        }
+
+        .desc-more-btn {
+            color: #ffcc00;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-left: 6px;
+            white-space: nowrap;
+        }
+
+        .desc-more-btn:hover {
+            color: #ffe066;
         }
 
         .modal-tags {
@@ -670,12 +695,12 @@
         }
 
         /* More Modal & Badges Custom Styling */
-        .more-card, .profile-card, .badge-card, .copied-card {
+        .more-card, .profile-card, .badge-card, .copied-card, .full-desc-card {
             border-color: #ffcc00 !important;
             box-shadow: 0 0 20px rgba(255, 204, 0, 0.4) !important;
         }
 
-        .more-title, .profile-title, .badge-title, .copied-title {
+        .more-title, .profile-title, .badge-title, .copied-title, .full-desc-title {
             font-size: 1.1rem;
             color: #ffcc00;
             text-align: center;
@@ -1041,7 +1066,7 @@
     <!-- Header Nav -->
     <div class="header-nav">
         <div class="nav-left">
-            <img src="https://www.image2url.com/r2/default/images/1786188882795-bffbeadc-3371-4d11-b357-540852ec6bab.png" alt="ULB Level Browser" class="site-logo" id="siteLogoImg" />
+            <img src="https://www.image2url.com/r2/default/images/1786188882795-bffbeadc-3371-4d11-b357-540852ec6bab.png" alt="ULB: Level Browser" class="site-logo" id="siteLogoImg" />
             <button class="nav-btn tab-btn active" id="tabLevelsBtn" onclick="switchMainTab('levels')">Levels</button>
             <button class="nav-btn tab-btn" id="tabWorldsBtn" onclick="switchMainTab('worlds')">Worlds</button>
             <button class="more-btn" onclick="openMoreModal('rules')">More</button>
@@ -1191,7 +1216,7 @@
 
             <div class="footer-notice-container">
                 <div class="affiliation-notice">
-                    ULB Level Browser is not affiliated by BVB Games!
+                    ULB: Level Browser is not affiliated by BVB Games!
                 </div>
                 <div class="affiliation-notice">
                     Ultimate Level Maker / Builder is made by Berneyvonbean under BVB Games!
@@ -1220,6 +1245,16 @@
             </div>
             <div class="modal-description" id="modalDesc"></div>
             <div class="modal-tags" id="modalTags"></div>
+        </div>
+    </div>
+
+    <!-- Full Description Expand Modal -->
+    <div class="modal-overlay" id="fullDescModal" onclick="closeModal(event, 'fullDescModal')">
+        <div class="modal-card full-desc-card">
+            <button class="close-modal-btn" onclick="hideModal('fullDescModal')">X</button>
+            <div class="full-desc-title">DESCRIPTION</div>
+            <div class="modal-description" id="fullDescModalText" style="max-height: 350px; overflow-y: auto;"></div>
+            <button class="okay-btn" onclick="hideModal('fullDescModal')">Close</button>
         </div>
     </div>
 
@@ -1298,7 +1333,7 @@ Added Dark Mode to Options!</div>
 - Updates
 - Options
 
-Changed the name to "ULB Level Browser"!</div>
+Changed the name to "ULB: Level Browser"!</div>
                 </div>
             </div>
 
@@ -1805,6 +1840,40 @@ Changed the name to "ULB Level Browser"!</div>
             }
         }
 
+        /* Helper to escape HTML text for safe rendering */
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.innerText = text;
+            return div.innerHTML;
+        }
+
+        /* Description length check & truncation detector */
+        function checkAndTruncateDescription(text) {
+            if (!text) return { truncated: false, text: 'No description provided.' };
+
+            const isMobile = window.innerWidth <= 850;
+            const wordLimit = isMobile ? 30 : 140;
+            const maxWordLength = isMobile ? 18 : 35; // Long word threshold for layout breaking
+
+            const words = text.trim().split(/\s+/);
+            const hasLongWord = words.some(w => w.length > maxWordLength);
+            const isTooLong = words.length > wordLimit || hasLongWord;
+
+            if (!isTooLong) {
+                return { truncated: false, text: text };
+            }
+
+            // Truncate based on word count limit or cap long words cleanly
+            let truncatedWords = words.slice(0, wordLimit);
+            let truncatedText = truncatedWords.map(w => w.length > maxWordLength ? w.substring(0, maxWordLength) + '...' : w).join(' ');
+            return { truncated: true, text: truncatedText + '...' };
+        }
+
+        function openFullDescModal(fullText) {
+            document.getElementById('fullDescModalText').innerText = fullText;
+            document.getElementById('fullDescModal').style.display = 'flex';
+        }
+
         function openLevelModal(item) {
             hideModal('profileModal');
             const isWorld = currentMainTab === 'worlds' || item.worldsCount !== undefined;
@@ -1826,7 +1895,20 @@ Changed the name to "ULB Level Browser"!</div>
                 worldsMeta.style.display = 'none';
             }
 
-            document.getElementById('modalDesc').innerText = item.description || 'No description provided.';
+            // Description Handling & Truncation logic
+            const rawDesc = item.description || 'No description provided.';
+            const descElem = document.getElementById('modalDesc');
+            const result = checkAndTruncateDescription(rawDesc);
+
+            if (result.truncated) {
+                descElem.classList.add('has-more');
+                descElem.innerHTML = `${escapeHtml(result.text)} <span class="desc-more-btn">More...</span>`;
+                descElem.onclick = () => openFullDescModal(rawDesc);
+            } else {
+                descElem.classList.remove('has-more');
+                descElem.innerText = rawDesc;
+                descElem.onclick = null;
+            }
             
             const thumbWrapper = document.getElementById('modalThumbWrapper');
             const thumbElem = document.getElementById('modalThumb');
@@ -2068,8 +2150,6 @@ Changed the name to "ULB Level Browser"!</div>
             } else if (currentChartMode.startsWith('tag_')) {
                 const tagToFilter = currentChartMode.replace('tag_', '').toLowerCase();
                 items = items.filter(item => item.tags && item.tags.map(t => t.toLowerCase()).includes(tagToFilter));
-            } else {
-                items = shuffleArray([...items]);
             }
 
             currentFilteredLevels = items;
