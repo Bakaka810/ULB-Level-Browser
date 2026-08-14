@@ -1592,6 +1592,14 @@ Changed the name to "ULB: Level Browser"!</div>
                 id: "835397",
                 tags: ["traditional", "short", "adventure"],
                 thumbnail: "https://www.image2url.com/r2/default/images/1786551507619-910fcc40-ba39-4c93-be86-ea15784ae62e.png"
+            },
+            {
+                title: "Cesirs Beetle Mayhem",
+                description: "Welcome to the Mayhem Nest, where you have to fight agnaist various types of beetles and the queen to escape.",
+                creator: "Cesir Oficial",
+                id: "876201",
+                tags: ["short", "adventure", "boss"],
+                thumbnail: "https://www.image2url.com/r2/default/images/1786621579475-de39c7a8-3f27-4c49-a7f5-af1187100e72.png"
             }
         ];
 
@@ -1605,6 +1613,14 @@ Changed the name to "ULB: Level Browser"!</div>
                 tags: ["adventure"]
             }
         ];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             const indexedLevels = DEFAULT_LEVELS.map((lvl, idx) => ({ ...lvl, siteIndex: idx }));
@@ -1863,7 +1879,6 @@ Changed the name to "ULB: Level Browser"!</div>
                 return { truncated: false, text: text };
             }
 
-            // Truncate based on word count limit or cap long words cleanly
             let truncatedWords = words.slice(0, wordLimit);
             let truncatedText = truncatedWords.map(w => w.length > maxWordLength ? w.substring(0, maxWordLength) + '...' : w).join(' ');
             return { truncated: true, text: truncatedText + '...' };
@@ -1895,7 +1910,6 @@ Changed the name to "ULB: Level Browser"!</div>
                 worldsMeta.style.display = 'none';
             }
 
-            // Description Handling & Truncation logic
             const rawDesc = item.description || 'No description provided.';
             const descElem = document.getElementById('modalDesc');
             const result = checkAndTruncateDescription(rawDesc);
@@ -2085,74 +2099,64 @@ Changed the name to "ULB: Level Browser"!</div>
                 dualBoxes.forEach(b => b.style.display = 'none');
 
                 inputs.forEach(input => {
-                    switch(currentSearchMode) {
-                        case 'id': input.placeholder = `Enter ${term} ID...`; break;
-                        case 'title': input.placeholder = `Enter ${term} Title...`; break;
-                        case 'creator': input.placeholder = "Enter Creator name..."; break;
-                        default: input.placeholder = `Search ${currentMainTab}...`; break;
+                    if (currentSearchMode === 'id') {
+                        input.placeholder = `Search by ${term} ID...`;
+                    } else if (currentSearchMode === 'title') {
+                        input.placeholder = `Search by ${term} Title...`;
+                    } else if (currentSearchMode === 'creator') {
+                        input.placeholder = `Search by Creator...`;
+                    } else {
+                        input.placeholder = `Search ${term.toLowerCase()}s...`;
                     }
                 });
             }
         }
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
         function searchLevels() {
-            let items = currentMainTab === 'worlds' ? getWorlds() : getLevels();
+            const isWorlds = currentMainTab === 'worlds';
+            const baseItems = isWorlds ? getWorlds() : getLevels();
+            
+            const singleVal = (document.querySelector('.searchInputClass')?.value || '').toLowerCase().trim();
+            const titleVal = (document.querySelector('.searchTitleInputClass')?.value || '').toLowerCase().trim();
+            const creatorVal = (document.querySelector('.searchCreatorInputClass')?.value || '').toLowerCase().trim();
 
-            if (currentSearchMode === 'title_creator') {
-                const titleInput = document.querySelector('.searchTitleInputClass');
-                const creatorInput = document.querySelector('.searchCreatorInputClass');
-                
-                const titleQuery = titleInput ? titleInput.value.toLowerCase().trim() : '';
-                const creatorQuery = creatorInput ? creatorInput.value.toLowerCase().trim() : '';
+            let filtered = baseItems.filter(item => {
+                const title = (item.title || '').toLowerCase();
+                const creator = (item.creator || '').toLowerCase();
+                const id = (item.id || '').toLowerCase();
+                const tags = item.tags || [];
 
-                if (titleQuery || creatorQuery) {
-                    items = items.filter(item => {
-                        const title = (item.title || '').toLowerCase();
-                        const creator = (item.creator || '').toLowerCase();
-                        return (!titleQuery || title.includes(titleQuery)) && (!creatorQuery || creator.includes(creatorQuery));
-                    });
+                if (currentSearchMode === 'id') {
+                    return id.includes(singleVal);
+                } else if (currentSearchMode === 'title') {
+                    return title.includes(singleVal);
+                } else if (currentSearchMode === 'creator') {
+                    return creator.includes(singleVal);
+                } else if (currentSearchMode === 'title_creator') {
+                    const matchTitle = !titleVal || title.includes(titleVal);
+                    const matchCreator = !creatorVal || creator.includes(creatorVal);
+                    return matchTitle && matchCreator;
+                } else {
+                    return title.includes(singleVal) || creator.includes(singleVal) || id.includes(singleVal) || tags.some(t => t.toLowerCase().includes(singleVal));
                 }
-            } else {
-                const searchInput = document.querySelector('.searchInputClass');
-                const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            });
 
-                if (query) {
-                    items = items.filter(item => {
-                        const title = (item.title || '').toLowerCase();
-                        const id = (item.id || '').toLowerCase();
-                        const creator = (item.creator || '').toLowerCase();
-
-                        if (currentSearchMode === 'id') return id.includes(query);
-                        if (currentSearchMode === 'title') return title.includes(query);
-                        if (currentSearchMode === 'creator') return creator.includes(query);
-
-                        return title.includes(query) || id.includes(query) || creator.includes(query);
-                    });
-                }
-            }
-
-            if (currentChartMode === 'oldest_site') {
-                items.sort((a, b) => (a.siteIndex ?? 0) - (b.siteIndex ?? 0));
+            if (currentChartMode === 'none') {
+                shuffleArray(filtered);
+            } else if (currentChartMode === 'oldest_site') {
+                filtered.sort((a, b) => (a.siteIndex ?? 0) - (b.siteIndex ?? 0));
             } else if (currentChartMode === 'newest_site') {
-                items.sort((a, b) => (b.siteIndex ?? 0) - (a.siteIndex ?? 0));
+                filtered.sort((a, b) => (b.siteIndex ?? 0) - (a.siteIndex ?? 0));
             } else if (currentChartMode === 'oldest_id') {
-                items.sort((a, b) => parseInt(a.id || 0) - parseInt(b.id || 0));
+                filtered.sort((a, b) => parseInt(a.id || 0) - parseInt(b.id || 0));
             } else if (currentChartMode === 'newest_id') {
-                items.sort((a, b) => parseInt(b.id || 0) - parseInt(a.id || 0));
+                filtered.sort((a, b) => parseInt(b.id || 0) - parseInt(a.id || 0));
             } else if (currentChartMode.startsWith('tag_')) {
-                const tagToFilter = currentChartMode.replace('tag_', '').toLowerCase();
-                items = items.filter(item => item.tags && item.tags.map(t => t.toLowerCase()).includes(tagToFilter));
+                const tagToFind = currentChartMode.replace('tag_', '').toLowerCase();
+                filtered = filtered.filter(item => item.tags && item.tags.map(t => t.toLowerCase()).includes(tagToFind));
             }
 
-            currentFilteredLevels = items;
+            currentFilteredLevels = filtered;
             currentPage = 1;
             renderPage();
         }
